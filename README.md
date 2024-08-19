@@ -29,7 +29,7 @@ If you want to contribute to the development of the plugin, follow these steps:
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/your-repo/highlight-current-folder-section.git
+    git clone https://github.com/justanotherjurastudent/highlight-active-folder-section.git
     ```
 2. Install the dependencies:
     ```sh
