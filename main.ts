@@ -2,20 +2,26 @@ import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 interface FolderHighlighterSettings {
     highlightedFolderColor: string;
+    highlightFolderTitleColor: boolean;
     highlightedFolderTitleColor: string;
-	highlightedFolderTextColor: string;
+    highlightedFolderTextColor: string;
     highlightParentFolder: boolean;
     highlightedParentFolderColor: string;
-	highlightedParentFolderTextColor: string;
+    highlightedParentFolderTextColor: string;
+    highlightedFolderBorderRadius: string;
+    highlightedParentFolderBorderRadius: string;
 }
 
 const DEFAULT_SETTINGS: FolderHighlighterSettings = {
     highlightedFolderColor: '#eeeeee',
-    highlightedFolderTitleColor: '#ee2334af',
+    highlightFolderTitleColor: false,
+    highlightedFolderTitleColor: '#ffffff00',
 	highlightedFolderTextColor: '#000000',
     highlightParentFolder: false,
     highlightedParentFolderColor: '#dddddd',
 	highlightedParentFolderTextColor: '#000000',
+    highlightedFolderBorderRadius: '5px',
+    highlightedParentFolderBorderRadius: '5px',
 };
 
 export default class FolderHighlighter extends Plugin {
@@ -72,7 +78,7 @@ export default class FolderHighlighter extends Plugin {
         // Highlight the folder containing the active note
         const currentFolder = this.getParentFolderElement(activeFile.path);
         if (currentFolder) {
-            currentFolder.classList.add("highlighted-folder");
+                    currentFolder.classList.add("highlighted-folder");
 
             if (this.settings.highlightParentFolder) {
                 // Highlight the root folder in the path to the active note
@@ -124,20 +130,21 @@ export default class FolderHighlighter extends Plugin {
         this.styleEl.innerHTML = `
             .highlighted-folder {
                 background-color: ${this.settings.highlightedFolderColor} !important;
+                border-radius: ${this.settings.highlightedFolderBorderRadius} !important;
             }
             .highlighted-folder > .nav-folder-title {
-                background-color: ${this.settings.highlightedFolderTitleColor} !important;
+                ${this.settings.highlightFolderTitleColor ? `background-color: ${this.settings.highlightedFolderTitleColor} !important;` : ''}
+                color: ${this.settings.highlightedFolderTextColor} !important;
             }
-			.highlighted-folder > .nav-folder-title {
-				color: ${this.settings.highlightedFolderTextColor} !important;
-			}
             .highlighted-parent-folder {
                 background-color: ${this.settings.highlightedParentFolderColor} !important;
+                border-radius: ${this.settings.highlightedParentFolderBorderRadius} !important;
             }
-			.highlighted-parent-folder > .nav-folder-title {
-				color: ${this.settings.highlightedParentFolderTextColor} !important;
-			}
+            .highlighted-parent-folder > .nav-folder-title {
+                color: ${this.settings.highlightedParentFolderTextColor} !important;
+            }
         `;
+        
     }
 
     onunload() {
@@ -196,9 +203,9 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                         const value = event.target.value;
                         // Convert the hex color to RGB
                         const rgb = this.hexToRgb(value);
-                        this.plugin.settings[key] = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alphaValue})` as any as string;
+                        (this.plugin.settings as any)[key] = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alphaValue})` as string;
                         await this.plugin.saveSettings();
-                        text.setValue(this.plugin.settings[key]);
+                        text.setValue((this.plugin.settings as any)[key]);
                     });
                     text.inputEl.parentElement?.appendChild(colorPicker);
 
@@ -214,9 +221,9 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                     transparencySlider.addEventListener('input', async (event: any) => {
                         alphaValue = parseFloat(event.target.value);
                         const rgb = this.hexToRgb(colorPicker.value);
-                        this.plugin.settings[key] = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alphaValue})`;
+                        (this.plugin.settings as any)[key] = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alphaValue})`;
                         await this.plugin.saveSettings();
-                        text.setValue(this.plugin.settings[key]);
+                        text.setValue((this.plugin.settings as any)[key]);
                     });
                     text.inputEl.parentElement?.appendChild(transparencySlider);
 
@@ -227,7 +234,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                     resetButton.style.marginLeft = '10px';
                     resetButton.addEventListener('click', async () => {
                         // Reset to the last saved color
-                        this.plugin.settings[key] = savedColor;
+                        (this.plugin.settings as any)[key] = savedColor;
                         await this.plugin.saveSettings();
 
                         // Update the color picker
@@ -246,18 +253,52 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
         };
 
         // Highlighted Folder Color
-        createColorSetting('Highlighted Folder Color', 'Choose a background-color of the active folder-container.', 'highlightedFolderColor');
+        createColorSetting('Folder Section Background-Color', 'Choose a background-color of the active folder-container.', 'highlightedFolderColor');
+
+        // New setting for highlighting parent folder
+        // Highlight Folder Title Color
+        new Setting(containerEl)
+            .setName('Folder Background Color')
+            .setDesc('Enable background-color of the folder title.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.highlightFolderTitleColor)
+                .onChange(async (value) => {
+                    this.plugin.settings.highlightFolderTitleColor = value;
+                    if (!value) {
+                        this.plugin.settings.highlightedFolderTitleColor = '#ffffff00'; // Reset background color
+                    }
+                    await this.plugin.saveSettings();
+                    this.display();
+                    this.plugin.updateStyles(); // Update styles immediately
+                }));
 
         // Highlighted Folder Title Color
-        createColorSetting('Highlighted Folder Title Color', 'Choose a background-color for the closest folder.', 'highlightedFolderTitleColor');
+        if (this.plugin.settings.highlightFolderTitleColor) {
+            createColorSetting('Folder Background-Color', 'Choose a color for the highlighted folder title.', 'highlightedFolderTitleColor');
+        }
 
 		// Highlighted Folder Text Color
-		createColorSetting('Highlighted Folder Text Color', 'Choose a color for the highlighted folder text.', 'highlightedFolderTextColor');
+		createColorSetting('Folder Text Color', 'Choose a color for the highlighted folder text.', 'highlightedFolderTextColor');
+
+        // Highlighted Folder Border Radius
+        new Setting(containerEl)
+            .setName('Folder Border Radius')
+            .setDesc('Set the border radius of the highlighted folder.')
+            .addSlider(slider => slider
+                .setLimits(0, 50, 1)  // Min, Max, Step
+                .setValue(parseInt(this.plugin.settings.highlightedFolderBorderRadius))
+                .onChange(async (value) => {
+                    const radiusWithPx = `${value}px`;
+                    this.plugin.settings.highlightedFolderBorderRadius = radiusWithPx;
+                    await this.plugin.saveSettings();
+                    this.plugin.updateStyles(); // Update styles immediately
+                })
+                .setDynamicTooltip());  // Adds a tooltip showing the current value
 
         // New setting for highlighting parent folder
         new Setting(containerEl)
-            .setName('Highlight Parent Folder')
-            .setDesc('Enable highlighting of the root folder segment in the path to the active note.')
+            .setName('Highlight Root Folder')
+            .setDesc('Enable background-color of the root folder segment in the path to the active note.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.highlightParentFolder)
                 .onChange(async (value) => {
@@ -266,13 +307,27 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                     this.display();
                 }));
 
-        // Parent Folder Color
 		// Parent Folder Color
 		if (this.plugin.settings.highlightParentFolder) {
-			createColorSetting('Parent Folder Color', 'Choose a background-color of the root folder segment.', 'highlightedParentFolderColor');
-			createColorSetting('Parent Folder Text Color', 'Choose a color for the highlighted parent folder text.', 'highlightedParentFolderTextColor');
+			createColorSetting('Root Folder Section Background-Color', 'Choose a background-color of the root folder segment.', 'highlightedParentFolderColor');
+			createColorSetting('Root Folder Text Color', 'Choose a color for the highlighted root folder text.', 'highlightedParentFolderTextColor');
 		}
-    }
+            
+        // Highlighted Root Folder Border Radius
+        new Setting(containerEl)
+            .setName('Root Folder Border Radius')
+            .setDesc('Set the border radius of the highlighted root folder.')
+            .addSlider(slider => slider
+                .setLimits(0, 50, 1)  // Min, Max, Step
+                .setValue(parseInt(this.plugin.settings.highlightedParentFolderBorderRadius))
+                .onChange(async (value) => {
+                    const radiusWithPx = `${value}px`;
+                    this.plugin.settings.highlightedParentFolderBorderRadius = radiusWithPx;
+                    await this.plugin.saveSettings();
+                    this.plugin.updateStyles(); // Update styles immediately
+                })
+                .setDynamicTooltip());  // Adds a tooltip showing the current value
+            }
 
     // Helper function to convert hex color to RGB
     hexToRgb(hex: string) {

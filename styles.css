@@ -2,23 +2,23 @@
 /* Bestehende Stile */
 .highlighted-folder {
     background-color: var(--highlighted-folder-color, #eeeeee) !important;
-    border-radius: 5px;
+    border-radius: var(--highlighted-folder-border-radius, 5px) !important;
     margin: 5px 0px;
     padding: 5px 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .highlighted-folder > .nav-folder-title {
-    background-color: var(--highlighted-folder-title-color, #ee2334af) !important;
+    background-color: var(--highlighted-folder-title-color, #ffffff00) !important;
     border-radius: 5px;
     margin-bottom: 5px;
     color: var(--highlighted-folder-text-color, #000000) !important;
 }
 
-/* Neue Stile für den Elternordner */
+/* Neue Stile für den Root Ordner */
 .highlighted-parent-folder {
     background-color: var(--highlighted-parent-folder-color, #dddddd) !important;
-    border-radius: 5px;
+    border-radius: var(--highlighted-parent-folder-border-radius, 5px) !important;
     padding: 5px;
     margin: 5px 0;
 }
