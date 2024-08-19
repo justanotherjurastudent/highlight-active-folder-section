@@ -12,7 +12,7 @@ This plugin for [Obsidian](https://obsidian.md) highlights the container of the 
 
 - **Highlight Root Folder:** The container of the root folder can also be highlighted with customizable colors.
 
-  ![image](https://github.com/user-attachments/assets/0d0e5b09-87f1-44ae-b717-f74ae8cb7967)
+  ![image](https://github.com/user-attachments/assets/fc325793-ac33-4a51-b5ae-f4ad2028375b)
 
 
 ## Installation
