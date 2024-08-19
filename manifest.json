@@ -4,7 +4,7 @@
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Highlight the active folder section and the title in the file explorer.",
-	"author": "Obsidian",
+	"author": "Lukas Collier",
 	"authorUrl": "https://github.com/justanotherjurastudent",
 	"isDesktopOnly": false
 }
