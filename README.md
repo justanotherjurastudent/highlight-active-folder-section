@@ -42,7 +42,7 @@ If you want to contribute to the development of the plugin, follow these steps:
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the GNU General Public License v3.0.
 
 ---
 
