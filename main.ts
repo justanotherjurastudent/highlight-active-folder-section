@@ -127,7 +127,7 @@ export default class FolderHighlighter extends Plugin {
             document.head.appendChild(this.styleEl);
         }
 
-        this.styleEl.innerHTML = `
+        const styleContent = `
             .highlighted-folder {
                 background-color: ${this.settings.highlightedFolderColor} !important;
                 border-radius: ${this.settings.highlightedFolderBorderRadius} !important;
@@ -144,7 +144,7 @@ export default class FolderHighlighter extends Plugin {
                 color: ${this.settings.highlightedParentFolderTextColor} !important;
             }
         `;
-        
+        this.styleEl.textContent = styleContent;
     }
 
     onunload() {
