@@ -8,11 +8,12 @@ This plugin for [Obsidian](https://obsidian.md) highlights the container of the 
 - **Customizable Colors:** Users can customize the background color of the highlighted folder and the color of the folder title.
 - **Style Adjustments:** Additional styles for the folder title and file names within the highlighted folder, including hover and drag effects.
 
-  ![image](https://github.com/user-attachments/assets/db9f7892-fa79-4634-9a27-4f03bc32c141)
+  ![image](https://github.com/user-attachments/assets/a8f296ba-a9f4-4841-a101-d5863c03e3c0)
+
 
 - **Highlight Root Folder:** The container of the root folder can also be highlighted with customizable colors.
 
-  ![image](https://github.com/user-attachments/assets/fc325793-ac33-4a51-b5ae-f4ad2028375b)
+  ![image](https://github.com/user-attachments/assets/31d7313c-8c12-4f8a-8f69-3b81839e9ec0)
 
 
 ## Installation
