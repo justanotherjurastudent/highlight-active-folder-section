@@ -10,7 +10,7 @@
 
 .highlighted-folder > .nav-folder-title {
     background-color: var(--highlighted-folder-title-color, #ffffff00) !important;
-    border-radius: 5px;
+    border-radius: var(--highlighted-folder-border-radius, 5px) !important;
     margin-bottom: 5px;
     color: var(--highlighted-folder-text-color, #000000) !important;
 }
@@ -24,7 +24,7 @@
 }
 
 .highlighted-parent-folder > .nav-folder-title {
-    border-radius: 5px;
+    border-radius: var(--highlighted-parent-folder-border-radius, 5px) !important;
     margin-bottom: 5px;
     color: var(--highlighted-parent-folder-text-color, #000000) !important;
 }
@@ -39,18 +39,30 @@
 
 .highlighted-folder .nav-file-title,
 .highlighted-parent-folder .nav-file-title {
-    color: inherit !important;
+    color: inherit;
 }
 
-.highlighted-folder .nav-file-title.is-active,
+.highlighted-folder .nav-file-title.is-active {
+    font-weight:var(--highlighted-folder-font-weight, bold) !important;
+    color: inherit;
+}
 .highlighted-parent-folder .nav-file-title.is-active {
-    font-weight: bold;
-    color: inherit !important;
+    font-weight:var(--highlighted-parent-folder-font-weight, bold) !important;
+    color: inherit;
 }
 
 .highlighted-folder .nav-file-title:hover,
 .highlighted-folder .nav-file-title.is-being-dragged,
 .highlighted-parent-folder .nav-file-title:hover,
 .highlighted-parent-folder .nav-file-title.is-being-dragged {
-    color: inherit !important;
+    color: inherit;
+}
+
+/* styles.css */
+.input-width-150 {
+    width: 150px;
+}
+
+.margin-left-10 {
+    margin-left: 10px;
 }

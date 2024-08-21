@@ -10,6 +10,8 @@ interface FolderHighlighterSettings {
     highlightedParentFolderTextColor: string;
     highlightedFolderBorderRadius: string;
     highlightedParentFolderBorderRadius: string;
+    highlightedFolderFontWeight: string;
+    highlightedParentFolderFontWeight: string;
 }
 
 const DEFAULT_SETTINGS: FolderHighlighterSettings = {
@@ -22,6 +24,8 @@ const DEFAULT_SETTINGS: FolderHighlighterSettings = {
 	highlightedParentFolderTextColor: '#000000',
     highlightedFolderBorderRadius: '5px',
     highlightedParentFolderBorderRadius: '5px',
+    highlightedFolderFontWeight: 'bold',
+    highlightedParentFolderFontWeight: 'bold'
 };
 
 export default class FolderHighlighter extends Plugin {
@@ -135,6 +139,8 @@ export default class FolderHighlighter extends Plugin {
             .highlighted-folder > .nav-folder-title {
                 ${this.settings.highlightFolderTitleColor ? `background-color: ${this.settings.highlightedFolderTitleColor} !important;` : ''}
                 color: ${this.settings.highlightedFolderTextColor} !important;
+                border-radius: ${this.settings.highlightedFolderBorderRadius} !important;
+                font-weight: ${this.settings.highlightedFolderFontWeight} !important
             }
             .highlighted-parent-folder {
                 background-color: ${this.settings.highlightedParentFolderColor} !important;
@@ -142,6 +148,8 @@ export default class FolderHighlighter extends Plugin {
             }
             .highlighted-parent-folder > .nav-folder-title {
                 color: ${this.settings.highlightedParentFolderTextColor} !important;
+                font-weight: ${this.settings.highlightedParentFolderFontWeight} !important;
+                border-radius: ${this.settings.highlightedParentFolderBorderRadius} !important;
             }
         `;
         this.styleEl.textContent = styleContent;
@@ -167,7 +175,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'Folder Highlighter Settings' });
+        new Setting(containerEl).setName('Active Folder Highlighter').setHeading();
 
         // Function to create color settings with transparency slider and reset button
         const createColorSetting = (name: string, desc: string, key: keyof FolderHighlighterSettings) => {
@@ -175,6 +183,12 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
             let alphaValue = 1; // Default alpha value
 
             // Parse initial alpha value if rgba is used
+            if (typeof savedColor === 'string') {
+                const match = savedColor.match(/rgba\((\d+), (\d+), (\d+), ([\d.]+)\)/);
+                if (match) {
+                    alphaValue = parseFloat(match[4]);
+                }
+            }
             const match = (savedColor as string).match(/rgba\((\d+), (\d+), (\d+), ([\d.]+)\)/);
             if (match) {
                 alphaValue = parseFloat(match[4]);
@@ -192,7 +206,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                         });
 
                     // Add the color picker next to the text input
-                    text.inputEl.style.width = '150px'; // Adjust the width of the text field
+                    text.inputEl.classList.add('input-width-150'); // Adjust the width of the text field
                     const colorPicker = document.createElement('input');
                     colorPicker.type = 'color';
                     // Extract only the color without alpha for the color picker
@@ -216,7 +230,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                     transparencySlider.max = '1';
                     transparencySlider.step = '0.01';
                     transparencySlider.value = alphaValue.toString();
-                    transparencySlider.style.marginLeft = '10px';
+                    transparencySlider.classList.add('margin-left-10');
                     transparencySlider.title = 'Move the slider to adjust transparency';
                     transparencySlider.addEventListener('input', async (event: any) => {
                         alphaValue = parseFloat(event.target.value);
@@ -231,7 +245,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                     const resetButton = document.createElement('button');
                     resetButton.textContent = 'Reset';
                     resetButton.title = 'Reset to previous color';
-                    resetButton.style.marginLeft = '10px';
+                    resetButton.classList.add('margin-left-10');
                     resetButton.addEventListener('click', async () => {
                         // Reset to the last saved color
                         (this.plugin.settings as any)[key] = savedColor;
@@ -252,11 +266,10 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                 });
         };
 
-        // Highlighted Folder Color
+        // Highlighted Section Color
         createColorSetting('Folder Section Background-Color', 'Choose a background-color of the active folder-container.', 'highlightedFolderColor');
 
-        // New setting for highlighting parent folder
-        // Highlight Folder Title Color
+        // Highlight Folder Background-Color
         new Setting(containerEl)
             .setName('Folder Background Color')
             .setDesc('Enable background-color of the folder title.')
@@ -280,6 +293,21 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
 		// Highlighted Folder Text Color
 		createColorSetting('Folder Text Color', 'Choose a color for the highlighted folder text.', 'highlightedFolderTextColor');
 
+        // Highlighted Folder Font Weight
+        new Setting(containerEl)
+            .setName('Highlighted Folder Font Weight')
+            .setDesc('Set the font weight of the highlighted folder titles.')
+            .addDropdown(dropdown => dropdown
+                .addOption('200', 'Thin')
+                .addOption('400', 'Normal')
+                .addOption('700', 'Bold')
+                .setValue(this.plugin.settings.highlightedFolderFontWeight || '700')
+                .onChange(async (value) => {
+                    this.plugin.settings.highlightedFolderFontWeight = value;
+                    await this.plugin.saveSettings();
+                    this.plugin.updateStyles(); // Update styles immediately
+                }));
+
         // Highlighted Folder Border Radius
         new Setting(containerEl)
             .setName('Folder Border Radius')
@@ -293,9 +321,13 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                     this.plugin.updateStyles(); // Update styles immediately
                 })
-                .setDynamicTooltip());  // Adds a tooltip showing the current value
+                .setDynamicTooltip() // Adds a tooltip showing the current value
+            );  
 
-        // New setting for highlighting parent folder
+        
+        new Setting(containerEl).setName('Root Folder Highlighter').setHeading();
+
+        // New setting for highlighting root folder
         new Setting(containerEl)
             .setName('Highlight Root Folder')
             .setDesc('Enable background-color of the root folder segment in the path to the active note.')
@@ -306,27 +338,42 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                     this.display();
                 }));
-
-		// Parent Folder Color
+        
+        // Root Folder Color
 		if (this.plugin.settings.highlightParentFolder) {
 			createColorSetting('Root Folder Section Background-Color', 'Choose a background-color of the root folder segment.', 'highlightedParentFolderColor');
 			createColorSetting('Root Folder Text Color', 'Choose a color for the highlighted root folder text.', 'highlightedParentFolderTextColor');
-		}
             
-        // Highlighted Root Folder Border Radius
-        new Setting(containerEl)
-            .setName('Root Folder Border Radius')
-            .setDesc('Set the border radius of the highlighted root folder.')
-            .addSlider(slider => slider
-                .setLimits(0, 50, 1)  // Min, Max, Step
-                .setValue(parseInt(this.plugin.settings.highlightedParentFolderBorderRadius))
-                .onChange(async (value) => {
-                    const radiusWithPx = `${value}px`;
-                    this.plugin.settings.highlightedParentFolderBorderRadius = radiusWithPx;
-                    await this.plugin.saveSettings();
-                    this.plugin.updateStyles(); // Update styles immediately
-                })
-                .setDynamicTooltip());  // Adds a tooltip showing the current value
+            // Highlighted Parent Folder Font Weight
+            new Setting(containerEl)
+                .setName('Highlighted Root Folder Font Weight')
+                .setDesc('Set the font weight of the highlighted parent folder titles.')
+                .addDropdown(dropdown => dropdown
+                    .addOption('200', 'Thin')
+                    .addOption('400', 'Normal')
+                    .addOption('700', 'Bold')
+                    .setValue(this.plugin.settings.highlightedParentFolderFontWeight || '700')
+                    .onChange(async (value) => {
+                        this.plugin.settings.highlightedParentFolderFontWeight = value;
+                        await this.plugin.saveSettings();
+                        this.plugin.updateStyles(); // Update styles immediately
+                    }));
+            
+            // Highlighted Root Folder Border Radius
+            new Setting(containerEl)
+                .setName('Root Folder Border Radius')
+                .setDesc('Set the border radius of the highlighted root folder.')
+                .addSlider(slider => slider
+                    .setLimits(0, 50, 1)  // Min, Max, Step
+                    .setValue(parseInt(this.plugin.settings.highlightedParentFolderBorderRadius))
+                    .onChange(async (value) => {
+                        const radiusWithPx = `${value}px`;
+                        this.plugin.settings.highlightedParentFolderBorderRadius = radiusWithPx;
+                        await this.plugin.saveSettings();
+                        this.plugin.updateStyles(); // Update styles immediately
+                    })
+                    .setDynamicTooltip());  // Adds a tooltip showing the current value
+                }
             }
 
     // Helper function to convert hex color to RGB
