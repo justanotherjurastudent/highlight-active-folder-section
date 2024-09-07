@@ -175,7 +175,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        new Setting(containerEl).setName('Active Folder Highlighter').setHeading();
+        new Setting(containerEl).setName('Active Folder').setHeading();
 
         // Function to create color settings with transparency slider and reset button
         const createColorSetting = (name: string, desc: string, key: keyof FolderHighlighterSettings) => {
@@ -267,11 +267,11 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
         };
 
         // Highlighted Section Color
-        createColorSetting('Folder Section Background-Color', 'Choose a background-color of the active folder-container.', 'highlightedFolderColor');
+        createColorSetting('Folder section background-color', 'Choose a background-color of the active folder-container.', 'highlightedFolderColor');
 
         // Highlight Folder Background-Color
         new Setting(containerEl)
-            .setName('Folder Background Color')
+            .setName('Folder background color')
             .setDesc('Enable background-color of the folder title.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.highlightFolderTitleColor)
@@ -287,15 +287,15 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
 
         // Highlighted Folder Title Color
         if (this.plugin.settings.highlightFolderTitleColor) {
-            createColorSetting('Folder Background-Color', 'Choose a color for the highlighted folder title.', 'highlightedFolderTitleColor');
+            createColorSetting('Folder background-color', 'Choose a color for the highlighted folder title.', 'highlightedFolderTitleColor');
         }
 
 		// Highlighted Folder Text Color
-		createColorSetting('Folder Text Color', 'Choose a color for the highlighted folder text.', 'highlightedFolderTextColor');
+		createColorSetting('Folder text color', 'Choose a color for the highlighted folder text.', 'highlightedFolderTextColor');
 
         // Highlighted Folder Font Weight
         new Setting(containerEl)
-            .setName('Highlighted Folder Font Weight')
+            .setName('Highlighted folder font weight')
             .setDesc('Set the font weight of the highlighted folder titles.')
             .addDropdown(dropdown => dropdown
                 .addOption('200', 'Thin')
@@ -310,7 +310,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
 
         // Highlighted Folder Border Radius
         new Setting(containerEl)
-            .setName('Folder Border Radius')
+            .setName('Folder border radius')
             .setDesc('Set the border radius of the highlighted folder.')
             .addSlider(slider => slider
                 .setLimits(0, 50, 1)  // Min, Max, Step
@@ -325,11 +325,11 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
             );  
 
         
-        new Setting(containerEl).setName('Root Folder Highlighter').setHeading();
+        new Setting(containerEl).setName('Root Folder').setHeading();
 
         // New setting for highlighting root folder
         new Setting(containerEl)
-            .setName('Highlight Root Folder')
+            .setName('Highlight root folder')
             .setDesc('Enable background-color of the root folder segment in the path to the active note.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.highlightParentFolder)
@@ -341,12 +341,12 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
         
         // Root Folder Color
 		if (this.plugin.settings.highlightParentFolder) {
-			createColorSetting('Root Folder Section Background-Color', 'Choose a background-color of the root folder segment.', 'highlightedParentFolderColor');
-			createColorSetting('Root Folder Text Color', 'Choose a color for the highlighted root folder text.', 'highlightedParentFolderTextColor');
+			createColorSetting('Root folder section background-color', 'Choose a background-color of the root folder segment.', 'highlightedParentFolderColor');
+			createColorSetting('Root folder text color', 'Choose a color for the highlighted root folder text.', 'highlightedParentFolderTextColor');
             
             // Highlighted Parent Folder Font Weight
             new Setting(containerEl)
-                .setName('Highlighted Root Folder Font Weight')
+                .setName('Highlighted root folder font weight')
                 .setDesc('Set the font weight of the highlighted parent folder titles.')
                 .addDropdown(dropdown => dropdown
                     .addOption('200', 'Thin')
@@ -361,7 +361,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
             
             // Highlighted Root Folder Border Radius
             new Setting(containerEl)
-                .setName('Root Folder Border Radius')
+                .setName('Root folder border radius')
                 .setDesc('Set the border radius of the highlighted root folder.')
                 .addSlider(slider => slider
                     .setLimits(0, 50, 1)  // Min, Max, Step
