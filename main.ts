@@ -175,7 +175,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        new Setting(containerEl).setName('Active Folder').setHeading();
+        new Setting(containerEl).setName('Active folder').setHeading();
 
         // Function to create color settings with transparency slider and reset button
         const createColorSetting = (name: string, desc: string, key: keyof FolderHighlighterSettings) => {
@@ -325,7 +325,7 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
             );  
 
         
-        new Setting(containerEl).setName('Root Folder').setHeading();
+        new Setting(containerEl).setName('Root folder').setHeading();
 
         // New setting for highlighting root folder
         new Setting(containerEl)
