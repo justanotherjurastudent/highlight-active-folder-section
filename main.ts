@@ -92,7 +92,7 @@ export default class FolderHighlighter extends Plugin {
                 }
             }
         }
-		const intermediateFolders = this.getAllFoldersInPath(activeFile.path);
+		const intermediateFolders = this.getIntermediateFoldersInPath(activeFile.path);
 		for (let intermediateFolder of intermediateFolders) {
 			if (intermediateFolder) {
 				intermediateFolder.classList.add("highlighted-intermediate-folder");
