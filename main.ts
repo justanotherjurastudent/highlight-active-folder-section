@@ -76,7 +76,7 @@ export default class FolderHighlighter extends Plugin {
         // Remove all previous highlights
         const allFolders = document.querySelectorAll(".nav-folder");
         allFolders.forEach((folder) => {
-            folder.classList.remove("highlighted-folder", "highlighted-parent-folder");
+            folder.classList.remove("highlighted-folder", "highlighted-parent-folder", "highlighted-intermediate-folder");
         });
 
         // Highlight the folder containing the active note
@@ -92,6 +92,12 @@ export default class FolderHighlighter extends Plugin {
                 }
             }
         }
+		const intermediateFolders = this.getAllFoldersInPath(activeFile.path);
+		for (let intermediateFolder of intermediateFolders) {
+			if (intermediateFolder) {
+				intermediateFolder.classList.add("highlighted-intermediate-folder");
+			}
+		}
     }
 
     getParentFolderElement(filePath: string): Element | null {
@@ -123,6 +129,23 @@ export default class FolderHighlighter extends Plugin {
 
         return null;
     }
+	
+	getIntermediateFoldersInPath(filePath) {
+	    let intermediateFolders = [];
+	    const folderPaths = filePath.split("/");
+	    folderPaths.pop();
+		
+	    while (folderPaths.length > 1) {
+			const folderName = folderPaths.join("/");
+			const folderElement = document.querySelector(`[data-path="${folderName}"]`);
+			if (folderElement) {
+				intermediateFolders.push(folderElement.closest(".nav-folder"));
+			}
+			folderPaths.pop();
+	    }
+		
+	    return intermediateFolders;
+	}
 
     updateStyles() {
         if (!this.styleEl) {
