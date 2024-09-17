@@ -1,6 +1,7 @@
 import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 interface FolderHighlighterSettings {
+    useImportantTags: boolean;
     highlightedFolderColor: string;
     highlightFolderTitleColor: boolean;
     highlightedFolderTitleColor: string;
@@ -15,6 +16,7 @@ interface FolderHighlighterSettings {
 }
 
 const DEFAULT_SETTINGS: FolderHighlighterSettings = {
+    useImportantTags: false,
     highlightedFolderColor: '#eeeeee',
     highlightFolderTitleColor: false,
     highlightedFolderTitleColor: '#ffffff00',
@@ -130,26 +132,41 @@ export default class FolderHighlighter extends Plugin {
             this.styleEl.id = 'folder-highlighter-styles';
             document.head.appendChild(this.styleEl);
         }
-
+    
+        const important = this.settings.useImportantTags ? ' !important' : '';
+    
         const styleContent = `
             .highlighted-folder {
-                background-color: ${this.settings.highlightedFolderColor} !important;
-                border-radius: ${this.settings.highlightedFolderBorderRadius} !important;
+                background-color: ${this.settings.highlightedFolderColor}${important};
+                border-radius: ${this.settings.highlightedFolderBorderRadius}${important};
             }
             .highlighted-folder > .nav-folder-title {
-                ${this.settings.highlightFolderTitleColor ? `background-color: ${this.settings.highlightedFolderTitleColor} !important;` : ''}
-                color: ${this.settings.highlightedFolderTextColor} !important;
-                border-radius: ${this.settings.highlightedFolderBorderRadius} !important;
-                font-weight: ${this.settings.highlightedFolderFontWeight} !important
+                ${this.settings.highlightFolderTitleColor ? `background-color: ${this.settings.highlightedFolderTitleColor}${important};` : ''}
+                color: ${this.settings.highlightedFolderTextColor}${important};
+                border-radius: ${this.settings.highlightedFolderBorderRadius}${important};
+                font-weight: ${this.settings.highlightedFolderFontWeight}${important};
             }
             .highlighted-parent-folder {
-                background-color: ${this.settings.highlightedParentFolderColor} !important;
-                border-radius: ${this.settings.highlightedParentFolderBorderRadius} !important;
+                background-color: ${this.settings.highlightedParentFolderColor}${important};
+                border-radius: ${this.settings.highlightedParentFolderBorderRadius}${important};
             }
             .highlighted-parent-folder > .nav-folder-title {
-                color: ${this.settings.highlightedParentFolderTextColor} !important;
-                font-weight: ${this.settings.highlightedParentFolderFontWeight} !important;
-                border-radius: ${this.settings.highlightedParentFolderBorderRadius} !important;
+                color: ${this.settings.highlightedParentFolderTextColor}${important};
+                font-weight: ${this.settings.highlightedParentFolderFontWeight}${important};
+                border-radius: ${this.settings.highlightedParentFolderBorderRadius}${important};
+            }
+            .highlighted-folder > .nav-folder-title:hover,
+            .highlighted-folder > .nav-folder-title.is-being-dragged,
+            .highlighted-parent-folder > .nav-folder-title:hover,
+            .highlighted-parent-folder > .nav-folder-title.is-being-dragged {
+                color: ${this.settings.highlightedFolderTextColor}${important};
+                font-weight: ${this.settings.highlightedFolderFontWeight}${important};
+            }
+            .highlighted-folder .nav-file-title.is-active {
+                font-weight: ${this.settings.highlightedFolderFontWeight}${important};
+            }
+            .highlighted-parent-folder .nav-file-title.is-active {
+                font-weight: ${this.settings.highlightedParentFolderFontWeight}${important};
             }
         `;
         this.styleEl.textContent = styleContent;
@@ -174,6 +191,17 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
         const { containerEl } = this;
 
         containerEl.empty();
+
+        new Setting(containerEl)
+        .setName('Overrides theme settings')
+        .setDesc('Enable this to override theme styles with !important tags.')
+        .addToggle(toggle => toggle
+            .setValue(this.plugin.settings.useImportantTags)
+            .onChange(async (value) => {
+                this.plugin.settings.useImportantTags = value;
+                await this.plugin.saveSettings();
+                this.plugin.updateStyles();
+            }));
 
         new Setting(containerEl).setName('Active folder').setHeading();
 
