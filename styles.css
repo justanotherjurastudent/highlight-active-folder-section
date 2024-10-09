@@ -2,8 +2,12 @@
     background-color: var(--highlighted-folder-color, #eeeeee);
     border-radius: var(--highlighted-folder-border-radius, 5px);
     margin: 5px 0;
-    padding: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: padding 0.2s ease;
+}
+
+.highlighted-folder:not(.is-collapsed) {
+    padding: 5px;
 }
 
 .highlighted-folder > .nav-folder-title {
@@ -17,7 +21,7 @@
 .highlighted-parent-folder {
     background-color: var(--highlighted-parent-folder-color, #dddddd);
     border-radius: var(--highlighted-parent-folder-border-radius, 5px);
-    padding: 5px;
+    padding: 0;
     margin: 5px 0;
 }
 
