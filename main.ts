@@ -45,12 +45,14 @@ export default class FolderHighlighter extends Plugin {
 		// Register event to update the highlighted folder when the active note changes
 		this.registerEvent(
 			this.app.workspace.on("active-leaf-change", () => {
+				this.revealActiveFileInExplorer();
 				this.highlightFolders();
 			})
 		);
 
 		// Highlight the parent folder and apply styles when the layout is ready
 		this.app.workspace.onLayoutReady(() => {
+			this.revealActiveFileInExplorer();
 			this.highlightFolders();
 			this.updateStyles();
 
@@ -73,6 +75,43 @@ export default class FolderHighlighter extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 		this.updateStyles();
+	}
+
+	private revealActiveFileInExplorer() {
+		const file = this.app.workspace.getActiveFile();
+		if (!file) return;
+		
+		const leaf = this.app.workspace.getLeavesOfType("file-explorer")[0];
+		if (!leaf) return;
+		
+		// First reveal the file in folder to ensure parents are expanded
+		const explorer = leaf.view as any;
+		if (typeof explorer.revealInFolder === "function") {
+			explorer.revealInFolder(file);
+			
+			// Wait for DOM to update after reveal
+			setTimeout(() => {
+				// Find the file element
+				const fileElement = document.querySelector(`[data-path="${file.path}"]`);
+				if (fileElement) {
+					// Get the file explorer container
+					const container = fileElement.closest('.nav-files-container');
+					if (container) {
+						// Calculate position to center the element
+						const containerHeight = container.clientHeight;
+						const elementTop = fileElement.getBoundingClientRect().top;
+						const containerTop = container.getBoundingClientRect().top;
+						const offset = elementTop - containerTop - (containerHeight / 2);
+						
+						// Smooth scroll to centered position
+						container.scrollTo({
+							top: container.scrollTop + offset,
+							behavior: 'smooth'
+						});
+					}
+				}
+			}, 300); // 0.3 second delay
+		}
 	}
 
 	highlightFolders() {
@@ -181,8 +220,7 @@ export default class FolderHighlighter extends Plugin {
 		const styleContent = `
             .highlighted-folder {
                 background-color: ${
-					this.settings.highlightedFolderColor
-				}${important};
+					this.settings.highlightedFolderColor}${important};
                 border-radius: ${
 					this.settings.highlightedFolderBorderRadius
 				}${important};
