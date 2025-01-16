@@ -1,6 +1,7 @@
 import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
 
 interface FolderHighlighterSettings {
+	autoScroll: boolean;
 	useImportantTags: boolean;
 	highlightedFolderColor: string;
 	highlightFolderTitleColor: boolean;
@@ -16,6 +17,7 @@ interface FolderHighlighterSettings {
 }
 
 const DEFAULT_SETTINGS: FolderHighlighterSettings = {
+	autoScroll: true,
 	useImportantTags: false,
 	highlightedFolderColor: "#eeeeee",
 	highlightFolderTitleColor: false,
@@ -33,37 +35,95 @@ const DEFAULT_SETTINGS: FolderHighlighterSettings = {
 export default class FolderHighlighter extends Plugin {
 	settings: FolderHighlighterSettings;
 	private styleEl: HTMLStyleElement | null = null;
+	private revealTimeout: NodeJS.Timeout | undefined;
+	private debounceTimer: NodeJS.Timeout | undefined;
 
 	async onload() {
 		await this.loadSettings();
-
 		this.addSettingTab(new FolderHighlighterSettingTab(this.app, this));
-
-		// Apply styles immediately after loading
 		this.updateStyles();
-
-		// Register event to update the highlighted folder when the active note changes
+	
+		// For reveal functionality
 		this.registerEvent(
-			this.app.workspace.on("active-leaf-change", () => {
-				this.revealActiveFileInExplorer();
-				this.highlightFolders();
+			this.app.workspace.on("file-open", () => {
+				this.handleReveal();
 			})
 		);
-
-		// Highlight the parent folder and apply styles when the layout is ready
+	
+		this.registerEvent(
+			this.app.workspace.on("file-menu", (menu, file) => {
+				this.handleReveal();
+			})
+		);
+	
+		// Only for highlighting
+		this.registerEvent(
+			this.app.workspace.on("active-leaf-change", () => {
+						this.handleHighlight();
+					})
+		);
+	
+		// Initial setup
 		this.app.workspace.onLayoutReady(() => {
-			this.revealActiveFileInExplorer();
 			this.highlightFolders();
-			this.updateStyles();
-
-			// Add a short timeout to ensure styles are applied after everything is loaded
-			setTimeout(() => {
-				this.updateStyles();
-				this.highlightFolders();
-			}, 500);
 		});
 	}
+	
+	private handleReveal() {
+		if (this.debounceTimer) clearTimeout(this.debounceTimer);
+		this.debounceTimer = setTimeout(() => {
+			const file = this.app.workspace.getActiveFile();
+			if (!file) return;
+			this.revealActiveFileInExplorer();
+		}, 150);
+	}
+	
+	private handleHighlight() {
+		const file = this.app.workspace.getActiveFile();
+		if (!file) return;
+		this.highlightFolders();
+	}
 
+	private async revealActiveFileInExplorer() {
+		try {
+			const file = this.app.workspace.getActiveFile();
+			if (!file) return;
+	
+			const leaf = this.app.workspace.getLeavesOfType("file-explorer")[0];
+			if (!leaf) return;
+	
+			const explorer = leaf.view as any;
+			if (typeof explorer.revealInFolder !== "function") return;
+	
+			if (this.revealTimeout) {
+				clearTimeout(this.revealTimeout);
+			}
+	
+			this.revealTimeout = setTimeout(async () => {
+				try {
+					await explorer.revealInFolder(file);
+					await new Promise(resolve => setTimeout(resolve, 100));
+	
+					const fileElement = document.querySelector(`[data-path="${file.path}"]`);
+					if (!fileElement || !this.settings.autoScroll) return;
+	
+					const container = fileElement.closest('.nav-files-container');
+					if (!(container instanceof HTMLElement)) return;
+	
+					const fileHTMLElement = fileElement as HTMLElement;
+					container.scrollTo({
+						top: fileHTMLElement.offsetTop - container.clientHeight / 2,
+						behavior: 'smooth'
+					});
+				} catch (error) {
+					console.error("Error in reveal timeout:", error);
+				}
+			}, 200);
+		} catch (error) {
+			console.error("Error in revealActiveFileInExplorer:", error);
+		}
+	}
+	
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
@@ -77,41 +137,10 @@ export default class FolderHighlighter extends Plugin {
 		this.updateStyles();
 	}
 
-	private revealActiveFileInExplorer() {
-		const file = this.app.workspace.getActiveFile();
-		if (!file) return;
-		
-		const leaf = this.app.workspace.getLeavesOfType("file-explorer")[0];
-		if (!leaf) return;
-		
-		// First reveal the file in folder to ensure parents are expanded
-		const explorer = leaf.view as any;
-		if (typeof explorer.revealInFolder === "function") {
-			explorer.revealInFolder(file);
-			
-			// Wait for DOM to update after reveal
-			setTimeout(() => {
-				// Find the file element
-				const fileElement = document.querySelector(`[data-path="${file.path}"]`);
-				if (fileElement) {
-					// Get the file explorer container
-					const container = fileElement.closest('.nav-files-container');
-					if (container) {
-						// Calculate position to center the element
-						const containerHeight = container.clientHeight;
-						const elementTop = fileElement.getBoundingClientRect().top;
-						const containerTop = container.getBoundingClientRect().top;
-						const offset = elementTop - containerTop - (containerHeight / 2);
-						
-						// Smooth scroll to centered position
-						container.scrollTo({
-							top: container.scrollTop + offset,
-							behavior: 'smooth'
-						});
-					}
-				}
-			}, 300); // 0.3 second delay
-		}
+	async onunload() {
+		if (this.revealTimeout) clearTimeout(this.revealTimeout);
+		if (this.debounceTimer) clearTimeout(this.debounceTimer);
+		if (this.styleEl) this.styleEl.remove();
 	}
 
 	highlightFolders() {
@@ -279,12 +308,6 @@ export default class FolderHighlighter extends Plugin {
         `;
 		this.styleEl.textContent = styleContent;
 	}
-
-	onunload() {
-		if (this.styleEl) {
-			this.styleEl.remove();
-		}
-	}
 }
 
 class FolderHighlighterSettingTab extends PluginSettingTab {
@@ -314,6 +337,16 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
 						this.plugin.updateStyles();
 					})
 			);
+
+			new Setting(containerEl)
+            .setName('Auto scroll to active file')
+            .setDesc('Automatically scroll the file explorer to the active file')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.autoScroll)
+                .onChange(async (value) => {
+                    this.plugin.settings.autoScroll = value;
+                    await this.plugin.saveSettings();
+                }));
 
 		new Setting(containerEl).setName("Active folder").setHeading();
 
