@@ -15,6 +15,8 @@ This plugin for [Obsidian](https://obsidian.md) highlights the container of the 
 
   ![image](https://github.com/user-attachments/assets/31d7313c-8c12-4f8a-8f69-3b81839e9ec0)
 
+- **Autoscroll:** When you switch between notes or open new notes, the file explorer moves to the active note.
+
 
 ## Installation
 
