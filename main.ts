@@ -50,16 +50,10 @@ export default class FolderHighlighter extends Plugin {
 			})
 		);
 	
-		this.registerEvent(
-			this.app.workspace.on("file-menu", (menu, file) => {
-				this.handleReveal();
-			})
-		);
-	
 		// Only for highlighting
 		this.registerEvent(
 			this.app.workspace.on("active-leaf-change", () => {
-						this.handleHighlight();
+						this.highlightFolders();
 					})
 		);
 	
@@ -78,11 +72,11 @@ export default class FolderHighlighter extends Plugin {
 		}, 150);
 	}
 	
-	private handleHighlight() {
+	/*private handleHighlight() {
 		const file = this.app.workspace.getActiveFile();
 		if (!file) return;
 		this.highlightFolders();
-	}
+	} */
 
 	private async revealActiveFileInExplorer() {
 		try {
