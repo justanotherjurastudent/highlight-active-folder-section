@@ -1,7 +1,7 @@
 {
 	"id": "highlight-active-folder-section",
 	"name": "Highlight active folder section",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"minAppVersion": "1.0.0",
 	"description": "Highlight the active folder section and the title in the file explorer.",
 	"author": "Lukas Collier",

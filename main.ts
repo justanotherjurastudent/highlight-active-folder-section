@@ -61,6 +61,7 @@ export default class FolderHighlighter extends Plugin {
 		this.app.workspace.onLayoutReady(() => {
 			this.highlightFolders();
 		});
+
 	}
 	
 	private handleReveal() {
@@ -95,7 +96,7 @@ export default class FolderHighlighter extends Plugin {
 	
 			this.revealTimeout = setTimeout(async () => {
 				try {
-					await explorer.revealInFolder(file);
+					//await explorer.revealInFolder(file);
 					await new Promise(resolve => setTimeout(resolve, 100));
 	
 					const fileElement = document.querySelector(`[data-path="${file.path}"]`);
@@ -341,6 +342,20 @@ class FolderHighlighterSettingTab extends PluginSettingTab {
                     this.plugin.settings.autoScroll = value;
                     await this.plugin.saveSettings();
                 }));
+
+			new Setting(containerEl)
+				.setDesc('Attention: To automatically expand folders containing the active file, enable "auto-reveal current file" in the File Explorer (available in Obsidian 1.8+).')
+				.setClass('setting-item-info')
+				.then((setting) => {
+					// Add info icon at the start
+					setting.nameEl.createEl("span", {
+						text: "ℹ️",
+						cls: "setting-info-icon"
+					});
+					setting.nameEl.style.display = "flex";
+					setting.nameEl.style.alignItems = "center";
+					setting.nameEl.style.gap = "5px";
+				});
 
 		new Setting(containerEl).setName("Active folder").setHeading();
 
