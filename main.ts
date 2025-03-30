@@ -140,7 +140,10 @@ export default class FolderHighlighter extends Plugin {
 
 	highlightFolders() {
 		const activeFile = this.app.workspace.getActiveFile();
-		if (!activeFile) return;
+		if (!activeFile) {
+			this.clearHighlight();	
+			return;
+		}
 
 		// Remove all previous highlights
 		const allFolders = document.querySelectorAll(".nav-folder");
@@ -176,6 +179,13 @@ export default class FolderHighlighter extends Plugin {
 			}
 		}
 	}
+
+	clearHighlight() {
+		document.querySelectorAll(".highlighted-folder").forEach((el) => {
+		  el.classList.remove("highlighted-folder");
+		  el.classList.remove("highlighted-parent-folder");
+		});
+	  }
 
 	getParentFolderElement(filePath: string): Element | null {
 		const folderPaths = filePath.split("/");
