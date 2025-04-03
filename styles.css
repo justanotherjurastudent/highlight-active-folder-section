@@ -1,57 +1,191 @@
+/* Theme-übergreifende Basiseinstellungen */
+:root {
+    /* Light Theme Variablen */
+    --light-highlighted-folder-color: rgba(238, 238, 238, 1);
+    --light-highlighted-folder-title-color: rgba(255, 255, 255, 0);
+    --light-highlighted-folder-text-color: rgba(0, 0, 0, 1);
+    --light-highlighted-parent-folder-color: rgba(221, 221, 221, 1);
+    --light-highlighted-parent-folder-text-color: rgba(0, 0, 0, 1);
+
+    /* Dark Theme Variablen */
+    --dark-highlighted-folder-color: rgba(51, 51, 51, 1);
+    --dark-highlighted-folder-title-color: rgba(51, 51, 51, 1);
+    --dark-highlighted-folder-text-color: rgba(255, 255, 255, 1);
+    --dark-highlighted-parent-folder-color: rgba(68, 68, 68, 1);
+    --dark-highlighted-parent-folder-text-color: rgba(255, 255, 255, 1);
+
+    /* Gemeinsame Variablen */
+    --highlighted-folder-border-radius: 5px;
+    --highlighted-parent-folder-border-radius: 5px;
+    --highlighted-folder-font-weight: bold;
+    --highlighted-parent-folder-font-weight: bold;
+}
+
 .highlighted-folder {
-    background-color: var(--highlighted-folder-color, #eeeeee);
-    border-radius: var(--highlighted-folder-border-radius, 5px);
     margin: 5px 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    transition: padding 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .highlighted-folder:not(.is-collapsed) {
     padding: 5px;
 }
 
-.highlighted-folder > .nav-folder-title {
-    background-color: var(--highlighted-folder-title-color, #ffffff00);
-    border-radius: var(--highlighted-folder-border-radius, 5px);
-    margin-bottom: 5px;
-    color: var(--highlighted-folder-text-color, #000000);
+/* Light Theme Variablen */
+.theme-light {
+    --highlighted-folder-color: var(--light-highlighted-folder-color);
+    --highlighted-folder-title-color: var(--light-highlighted-folder-title-color);
+    --highlighted-folder-text-color: var(--light-highlighted-folder-text-color);
+    --highlighted-parent-folder-color: var(--light-highlighted-parent-folder-color);
+    --highlighted-parent-folder-text-color: var(--light-highlighted-parent-folder-text-color);
 }
 
+/* Dark Theme Variablen */
+.theme-dark {
+    --highlighted-folder-color: var(--dark-highlighted-folder-color);
+    --highlighted-folder-title-color: var(--dark-highlighted-folder-title-color);
+    --highlighted-folder-text-color: var(--dark-highlighted-folder-text-color);
+    --highlighted-parent-folder-color: var(--dark-highlighted-parent-folder-color);
+    --highlighted-parent-folder-text-color: var(--dark-highlighted-parent-folder-text-color);
+}
+
+/* Dynamische Farbeinstellungen */
+.highlighted-folder {
+    background-color: var(--highlighted-folder-color);
+    border-radius: var(--highlighted-folder-border-radius);
+}
+
+.highlighted-folder > .nav-folder-title {
+    background-color: var(--highlighted-folder-title-color);
+    color: var(--highlighted-folder-text-color);
+    border-radius: var(--highlighted-folder-border-radius);
+    font-weight: var(--highlighted-folder-font-weight);
+}
 
 .highlighted-parent-folder {
-    background-color: var(--highlighted-parent-folder-color, #dddddd);
-    border-radius: var(--highlighted-parent-folder-border-radius, 5px);
-    padding: 0;
+    background-color: var(--highlighted-parent-folder-color);
+    border-radius: var(--highlighted-parent-folder-border-radius);
     margin: 5px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding-top: var(--parent-folder-padding, 3px);
+    padding-bottom: var(--parent-folder-padding, 3px);
 }
 
 .highlighted-parent-folder > .nav-folder-title {
-    border-radius: var(--highlighted-parent-folder-border-radius, 5px);
+    color: var(--highlighted-parent-folder-text-color);
+    border-radius: var(--highlighted-parent-folder-border-radius);
+    font-weight: var(--highlighted-parent-folder-font-weight);
     margin-bottom: 5px;
-    color: var(--highlighted-parent-folder-text-color, #000000);
 }
 
-
+/* Gemeinsame Text- und Hover-Stile */
 .highlighted-folder .nav-file-title,
 .highlighted-parent-folder .nav-file-title {
     color: inherit;
 }
 
 .highlighted-folder .nav-file-title.is-active {
-    font-weight:var(--highlighted-folder-font-weight, bold);
-    color: inherit;
+    font-weight: var(--highlighted-folder-font-weight);
 }
+
 .highlighted-parent-folder .nav-file-title.is-active {
-    font-weight:var(--highlighted-parent-folder-font-weight, bold);
-    color: inherit;
+    font-weight: var(--highlighted-parent-folder-font-weight);
 }
 
 .highlighted-folder .nav-file-title:hover,
-.highlighted-folder .nav-file-title.is-being-dragged,
 .highlighted-parent-folder .nav-file-title:hover,
+.highlighted-folder .nav-file-title.is-being-dragged, 
 .highlighted-parent-folder .nav-file-title.is-being-dragged {
+    font-weight: var(--highlighted-folder-font-weight) !important;
     color: inherit;
-    font-weight: var(--highlighted-folder-font-weight, bold);
+    background-color: color-mix(in srgb, var(--highlighted-folder-color) 60%, transparent) !important;
+    transition: background-color 0.2s ease;
+    transition: font-weight 0.1s ease;
+}
+
+/* Einstellungen Einrückung */
+.setting-indent {
+    margin-left: 20px;
+    padding-left: 10px;
+    border-left: 2px solid var(--background-modifier-border);
+}
+
+/* Theme-Umschalter und Animationen */
+.theme-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.theme-title {
+    margin: 0;
+    font-size: 1.5em;
+    transition: opacity 0.5s ease;
+}
+
+.theme-toggle-button {
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 5px;
+    color: var(--text-normal);
+    background-color: var(--background-modifier-hover);
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle-button:hover {
+    background-color: var(--background-modifier-active);
+}
+
+.theme-toggle-button svg {
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle-button:hover svg {
+    transform: rotate(15deg);
+}
+
+.color-setting-transition {
+    animation: color-transition 1.2s ease-in-out;
+}
+
+@keyframes color-transition {
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+        background-color: var(--background-modifier-hover);
+    }
+    30% {
+        opacity: 0.7;
+        transform: scale(1.05);
+        background-color: var(--background-modifier-active);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        background-color: transparent;
+    }
+}
+
+.color-comparison {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 5px;
+    font-size: 0.8em;
+    color: var(--text-muted);
+}
+
+.color-preview {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin: 0 5px;
+    border: 1px solid var(--background-modifier-border);
 }
 
 .input-width-150 {
@@ -60,4 +194,67 @@
 
 .margin-left-10 {
     margin-left: 10px;
+}
+
+/* Transparenz-Slider-Container */
+.transparency-slider-container {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    padding-left: 30px;
+}
+
+.transparency-slider-container .setting-item-info {
+    margin-right: 8px;
+    font-size: 0.8em;
+    color: var(--text-muted);
+    width: 85px;
+}
+
+.transparency-slider {
+    flex: 1;
+}
+
+.transparency-value {
+    margin-left: 8px;
+    font-size: 0.8em;
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Ersetze die beiden bestehenden Animations-Klassen mit dieser einen */
+.theme-transition {
+    animation: theme-switch 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center;
+  }
+  
+  @keyframes theme-switch {
+    0% {
+      opacity: 0.2;
+      transform: scale(0.98);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.02); 
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+/* Reset Button Styling */
+.setting-item .clickable-icon.reset {
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    margin-left: 8px;
+    background-color: var(--background-modifier-border);
+    transition: all 0.2s ease;
+}
+
+.setting-item .clickable-icon.reset:hover {
+    color: var(--text-normal);
+    background-color: var(--background-modifier-hover);
 }
