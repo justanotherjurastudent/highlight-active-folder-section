@@ -16,6 +16,12 @@ This plugin for [Obsidian](https://obsidian.md) highlights the container of the 
   ![image](https://github.com/user-attachments/assets/31d7313c-8c12-4f8a-8f69-3b81839e9ec0)
 
 - **Autoscroll:** When you switch between notes or open new notes, the file explorer moves to the active note.
+- **Auto-Collaps:** When enabled, the plugin will automatically collapse all folders in the file explorer except for the direct path to the currently active file.
+
+> [!NOTE]  
+> Please activate the "auto-reveal current file" button in your file explorer at the top to reveal the active file in your folders.
+![image](https://github.com/user-attachments/assets/fc1c1bc5-8c90-44b4-87dc-1a25367570c7)
+
 
 
 ## Installation
