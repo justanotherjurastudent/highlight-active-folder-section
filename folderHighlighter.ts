@@ -113,9 +113,19 @@ export default class FolderHighlighter extends Plugin {
 			}
 
 			this.highlightFolders();
-			const activeView =
-				this.app.workspace.getActiveViewOfType(MarkdownView);
-			if (activeView?.editor) activeView.editor.focus();
+			
+			// Only restore focus to editor if no other element (like title input) currently has focus
+			const activeElement = document.activeElement;
+			const shouldRestoreFocus = 
+				!activeElement || 
+				activeElement === document.body || 
+				activeElement.tagName === 'DIV';
+			
+			if (shouldRestoreFocus) {
+				const activeView =
+					this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (activeView?.editor) activeView.editor.focus();
+			}
 		} catch (error) {
 			console.error("Error in executeSequentially:", error);
 		}
