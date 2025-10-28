@@ -114,14 +114,14 @@ export default class FolderHighlighter extends Plugin {
 
 			this.highlightFolders();
 			
-			// Only restore focus to editor if no other element (like title input) currently has focus
+			// Only restore focus to editor if no input element (like title input) currently has focus
+			// This preserves Obsidian's default behavior where new notes start with title focused
 			const activeElement = document.activeElement;
-			const shouldRestoreFocus = 
-				!activeElement || 
-				activeElement === document.body || 
-				activeElement.tagName === 'DIV';
+			const isInputFocused = 
+				activeElement?.tagName === 'INPUT' || 
+				activeElement?.tagName === 'TEXTAREA';
 			
-			if (shouldRestoreFocus) {
+			if (!isInputFocused) {
 				const activeView =
 					this.app.workspace.getActiveViewOfType(MarkdownView);
 				if (activeView?.editor) activeView.editor.focus();
