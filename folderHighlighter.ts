@@ -1,4 +1,4 @@
-import { MarkdownView, Plugin } from "obsidian";
+import { MarkdownView, Plugin, TFile } from "obsidian";
 import { FolderHighlighterSettings, DEFAULT_SETTINGS } from "./settings";
 import { FolderHighlighterSettingTab } from "./folderHighlighterSettingTab";
 
@@ -9,6 +9,8 @@ export default class FolderHighlighter extends Plugin {
 	private operationQueue: Array<() => Promise<void>> = [];
 	private lastExplorerClickTime = 0;
 	private readonly USER_INTERACTION_DEBOUNCE = 300;
+	private readonly NEW_FILE_FOCUS_GRACE = 4000;
+	private recentlyCreatedFiles: Map<string, number> = new Map();
 
 	async onload() {
 		await this.loadSettings();
@@ -39,6 +41,15 @@ export default class FolderHighlighter extends Plugin {
 			this.app.workspace.on("layout-change", () =>
 				this.addFileExplorerClickListener()
 			)
+		);
+
+		// Track freshly created files so we can defer editor focus when Obsidian keeps the title selected.
+		this.registerEvent(
+			this.app.vault.on("create", (file) => {
+				if (file instanceof TFile) {
+					this.recentlyCreatedFiles.set(file.path, Date.now());
+				}
+			})
 		);
 	}
 
@@ -94,6 +105,8 @@ export default class FolderHighlighter extends Plugin {
 			const newFile = this.app.workspace.getActiveFile();
 			if (!newFile) return;
 
+			this.purgeExpiredCreatedEntries();
+
 			const now = Date.now();
 			const isRecentUserInteraction =
 				now - this.lastExplorerClickTime <
@@ -113,12 +126,41 @@ export default class FolderHighlighter extends Plugin {
 			}
 
 			this.highlightFolders();
-			const activeView =
-				this.app.workspace.getActiveViewOfType(MarkdownView);
-			if (activeView?.editor) activeView.editor.focus();
+			
+			// Only restore focus to editor if no input element (like title input) currently has focus
+			// This preserves Obsidian's default behavior where new notes start with title focused
+			const activeElement = document.activeElement;
+			const isInputFocused =
+				activeElement?.tagName === "INPUT" ||
+				activeElement?.tagName === "TEXTAREA";
+			const shouldKeepTitleFocus = this.shouldKeepTitleFocus(
+				newFile.path
+			);
+			
+			if (!shouldKeepTitleFocus && !isInputFocused) {
+				const activeView =
+					this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (activeView?.editor) activeView.editor.focus();
+			}
 		} catch (error) {
 			console.error("Error in executeSequentially:", error);
 		}
+	}
+
+	private purgeExpiredCreatedEntries() {
+		const cutoff = Date.now() - this.NEW_FILE_FOCUS_GRACE;
+		for (const [path, createdAt] of this.recentlyCreatedFiles.entries()) {
+			if (createdAt < cutoff) this.recentlyCreatedFiles.delete(path);
+		}
+	}
+
+	private shouldKeepTitleFocus(filePath: string): boolean {
+		// Preserve the default title focus only for a short period after creation.
+		const createdAt = this.recentlyCreatedFiles.get(filePath);
+		if (createdAt === undefined) return false;
+		const withinGrace = Date.now() - createdAt <= this.NEW_FILE_FOCUS_GRACE;
+		if (!withinGrace) this.recentlyCreatedFiles.delete(filePath);
+		return withinGrace;
 	}
 
 	private async collapseFolders(activeFilePath: string): Promise<void> {
