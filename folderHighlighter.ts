@@ -117,7 +117,7 @@ export default class FolderHighlighter extends Plugin {
 				!isRecentUserInteraction
 			) {
 				await this.collapseFolders(newFile.path);
-				await new Promise((resolve) => setTimeout(resolve, 50));
+				await new Promise((resolve) => setTimeout(resolve, 100));
 			}
 
 			if (this.settings.autoScroll && !isRecentUserInteraction) {
@@ -170,28 +170,63 @@ export default class FolderHighlighter extends Plugin {
 		if (!fileExplorerView || !fileExplorerView.containerEl) return;
 
 		const pathsToKeepOpen = new Set<string>();
-		let currentPath = "";
-		for (const segment of this.getParentPath(activeFilePath).split("/")) {
-			if (!segment && currentPath !== "") continue;
-			currentPath = currentPath ? `${currentPath}/${segment}` : segment;
-			pathsToKeepOpen.add(currentPath);
+		const parentPath = this.getParentPath(activeFilePath);
+		
+		// Build set of all parent paths that should remain open
+		if (parentPath) {
+			let currentPath = "";
+			const segments = parentPath.split("/");
+			for (const segment of segments) {
+				if (!segment) continue; // Skip empty segments
+				currentPath = currentPath ? `${currentPath}/${segment}` : segment;
+				pathsToKeepOpen.add(currentPath);
+			}
 		}
 
 		const allFolders =
 			fileExplorerView.containerEl.querySelectorAll(".nav-folder");
+		
+		// Collect all folder operations first to avoid DOM changes during iteration
+		const foldersToCollapse: HTMLElement[] = [];
+		const foldersToExpand: HTMLElement[] = [];
+		
 		allFolders.forEach((folderEl: HTMLElement) => {
 			const folderTitleEl = folderEl.querySelector(
 				".nav-folder-title"
 			) as HTMLElement;
 			if (!folderTitleEl) return;
+			
 			const folderPath = folderTitleEl.getAttribute("data-path");
+			if (!folderPath) return;
+			
 			const isCollapsed = folderEl.classList.contains("is-collapsed");
-			if (folderPath && pathsToKeepOpen.has(folderPath)) {
-				if (isCollapsed) folderTitleEl.click();
+			
+			if (pathsToKeepOpen.has(folderPath)) {
+				// This folder should be open
+				if (isCollapsed) {
+					foldersToExpand.push(folderTitleEl);
+				}
 			} else {
-				if (!isCollapsed) folderTitleEl.click();
+				// This folder should be collapsed
+				if (!isCollapsed) {
+					foldersToCollapse.push(folderTitleEl);
+				}
 			}
 		});
+
+		// First expand folders in the active path
+		for (const folderEl of foldersToExpand) {
+			folderEl.click();
+			// Small delay to let Obsidian process the click
+			await new Promise((resolve) => setTimeout(resolve, 10));
+		}
+
+		// Then collapse other folders
+		for (const folderEl of foldersToCollapse) {
+			folderEl.click();
+			// Small delay to let Obsidian process the click
+			await new Promise((resolve) => setTimeout(resolve, 10));
+		}
 	}
 
 	private async scrollToActiveFile(): Promise<void> {
