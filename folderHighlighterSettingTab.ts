@@ -54,7 +54,7 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 	private createGeneralSettings(containerEl: HTMLElement) {
 		new Setting(containerEl)
 			.setName("Minimal mode")
-			.setDesc("Disable all visual styling (shadows, animations, colors, etc.) while keeping core functionality like auto-collapse and center active file.")
+			.setDesc("Disable visual styling (shadows, animations, border radius, font weight, etc.) while keeping basic highlighting colors and core functionality like auto-collapse and center active file.")
 			.addToggle((t) =>
 				t
 					.setValue(this.plugin.settings.minimalMode)
