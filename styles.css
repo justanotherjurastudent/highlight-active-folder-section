@@ -53,12 +53,18 @@ body:not(.fh-minimal-mode) .highlighted-folder:not(.is-collapsed) {
 /* Dynamische Farbeinstellungen */
 .highlighted-folder {
     background-color: var(--highlighted-folder-color);
+}
+
+body:not(.fh-minimal-mode) .highlighted-folder {
     border-radius: var(--highlighted-folder-border-radius);
 }
 
 .highlighted-folder > .nav-folder-title {
     background-color: var(--highlighted-folder-title-color);
     color: var(--highlighted-folder-text-color);
+}
+
+body:not(.fh-minimal-mode) .highlighted-folder > .nav-folder-title {
     border-radius: var(--highlighted-folder-border-radius);
     font-weight: var(--highlighted-folder-font-weight);
 }
@@ -72,11 +78,19 @@ body:not(.fh-minimal-mode) .highlighted-parent-folder {
     padding-bottom: var(--parent-folder-padding, 3px);
 }
 
+.highlighted-parent-folder {
+    background-color: var(--highlighted-parent-folder-color);
+}
+
 body:not(.fh-minimal-mode) .highlighted-parent-folder > .nav-folder-title {
     color: var(--highlighted-parent-folder-text-color);
     border-radius: var(--highlighted-parent-folder-border-radius);
     font-weight: var(--highlighted-parent-folder-font-weight);
     margin-bottom: 5px;
+}
+
+.highlighted-parent-folder > .nav-folder-title {
+    color: var(--highlighted-parent-folder-text-color);
 }
 
 /* Gemeinsame Text- und Hover-Stile */
@@ -261,18 +275,4 @@ body:not(.fh-minimal-mode) .highlighted-parent-folder .nav-file-title.is-being-d
 }
 
 /* Minimal mode - only apply basic highlighting without fancy styling */
-body.fh-minimal-mode .highlighted-folder {
-    /* Keep only essential highlighting */
-}
-
-body.fh-minimal-mode .highlighted-folder > .nav-folder-title {
-    /* No additional styling in minimal mode */
-}
-
-body.fh-minimal-mode .highlighted-parent-folder {
-    /* No additional styling in minimal mode */
-}
-
-body.fh-minimal-mode .highlighted-parent-folder > .nav-folder-title {
-    /* No additional styling in minimal mode */
-}
+/* In minimal mode, only background colors are applied without any additional styling like shadows, transitions, border-radius, etc. */
