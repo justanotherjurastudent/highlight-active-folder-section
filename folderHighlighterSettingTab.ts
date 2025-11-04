@@ -15,37 +15,56 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 		this.colorSettings = [];
-		const themeHeaderEl = containerEl.createEl("div", {
-			cls: "theme-header",
-		});
-		themeHeaderEl.createEl("h2", {
-			text: this.plugin.settings.editingDarkTheme
-				? "Dark Theme"
-				: "Light Theme",
-			cls: "theme-title",
-		});
-		this.themeToggleButton = themeHeaderEl.createEl("div", {
-			cls: "theme-toggle-button",
-		});
-		this.updateThemeToggleIcon();
-		this.themeToggleButton.addEventListener("click", async () => {
-			this.containerEl.addClass("theme-transition");
-			this.plugin.settings.editingDarkTheme =
-				!this.plugin.settings.editingDarkTheme;
-			await this.plugin.saveSettings();
-			setTimeout(() => {
-				this.display();
-				setTimeout(
-					() => this.containerEl.removeClass("theme-transition"),
-					850
-				);
-			}, 150);
-		});
+		
+		if (!this.plugin.settings.minimalMode) {
+			const themeHeaderEl = containerEl.createEl("div", {
+				cls: "theme-header",
+			});
+			themeHeaderEl.createEl("h2", {
+				text: this.plugin.settings.editingDarkTheme
+					? "Dark Theme"
+					: "Light Theme",
+				cls: "theme-title",
+			});
+			this.themeToggleButton = themeHeaderEl.createEl("div", {
+				cls: "theme-toggle-button",
+			});
+			this.updateThemeToggleIcon();
+			this.themeToggleButton.addEventListener("click", async () => {
+				this.containerEl.addClass("theme-transition");
+				this.plugin.settings.editingDarkTheme =
+					!this.plugin.settings.editingDarkTheme;
+				await this.plugin.saveSettings();
+				setTimeout(() => {
+					this.display();
+					setTimeout(
+						() => this.containerEl.removeClass("theme-transition"),
+						850
+					);
+				}, 150);
+			});
+		}
+		
 		this.createGeneralSettings(containerEl);
-		this.createActiveFolderSettings(containerEl);
-		this.createRootFolderSettings(containerEl);
+		if (!this.plugin.settings.minimalMode) {
+			this.createActiveFolderSettings(containerEl);
+			this.createRootFolderSettings(containerEl);
+		}
 	}
 	private createGeneralSettings(containerEl: HTMLElement) {
+		new Setting(containerEl)
+			.setName("Minimal mode")
+			.setDesc("Disable visual styling (shadows, animations, border radius, font weight, etc.) while keeping basic highlighting colors and core functionality like auto-collapse and center active file.")
+			.addToggle((t) =>
+				t
+					.setValue(this.plugin.settings.minimalMode)
+					.onChange(async (v) => {
+						this.plugin.settings.minimalMode = v;
+						await this.plugin.saveSettings();
+						this.display();
+					})
+			);
+
 		new Setting(containerEl)
 			.setName("Override theme styles")
 			.setDesc("Use !important for style definitions")
@@ -316,6 +335,7 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 		(this.plugin.settings as unknown as { [key: string]: boolean })[`dark${key}`] = value;
 	};
 	updateThemeToggleIcon() {
+		if (!this.themeToggleButton) return;
 		this.themeToggleButton.empty();
 		this.themeToggleButton.innerHTML = this.plugin.settings.editingDarkTheme
 			? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`

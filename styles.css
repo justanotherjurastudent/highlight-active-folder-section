@@ -21,13 +21,14 @@
     --highlighted-parent-folder-font-weight: bold;
 }
 
-.highlighted-folder {
+/* Full styling mode (default) */
+body:not(.fh-minimal-mode) .highlighted-folder {
     margin: 5px 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
 
-.highlighted-folder:not(.is-collapsed) {
+body:not(.fh-minimal-mode) .highlighted-folder:not(.is-collapsed) {
     padding: 5px;
 }
 
@@ -50,19 +51,22 @@
 }
 
 /* Dynamische Farbeinstellungen */
-.highlighted-folder {
+
+body:not(.fh-minimal-mode) .highlighted-folder {
     background-color: var(--highlighted-folder-color);
     border-radius: var(--highlighted-folder-border-radius);
 }
 
-.highlighted-folder > .nav-folder-title {
+
+body:not(.fh-minimal-mode) .highlighted-folder > .nav-folder-title {
     background-color: var(--highlighted-folder-title-color);
     color: var(--highlighted-folder-text-color);
     border-radius: var(--highlighted-folder-border-radius);
     font-weight: var(--highlighted-folder-font-weight);
 }
 
-.highlighted-parent-folder {
+
+body:not(.fh-minimal-mode) .highlighted-parent-folder {
     background-color: var(--highlighted-parent-folder-color);
     border-radius: var(--highlighted-parent-folder-border-radius);
     margin: 5px 0;
@@ -71,7 +75,8 @@
     padding-bottom: var(--parent-folder-padding, 3px);
 }
 
-.highlighted-parent-folder > .nav-folder-title {
+
+body:not(.fh-minimal-mode) .highlighted-parent-folder > .nav-folder-title {
     color: var(--highlighted-parent-folder-text-color);
     border-radius: var(--highlighted-parent-folder-border-radius);
     font-weight: var(--highlighted-parent-folder-font-weight);
@@ -79,28 +84,27 @@
 }
 
 /* Gemeinsame Text- und Hover-Stile */
-.highlighted-folder .nav-file-title,
-.highlighted-parent-folder .nav-file-title {
+body:not(.fh-minimal-mode) .highlighted-folder .nav-file-title,
+body:not(.fh-minimal-mode) .highlighted-parent-folder .nav-file-title {
     color: inherit;
 }
 
-.highlighted-folder .nav-file-title.is-active {
+body:not(.fh-minimal-mode) .highlighted-folder .nav-file-title.is-active {
     font-weight: var(--highlighted-folder-font-weight);
 }
 
-.highlighted-parent-folder .nav-file-title.is-active {
+body:not(.fh-minimal-mode) .highlighted-parent-folder .nav-file-title.is-active {
     font-weight: var(--highlighted-parent-folder-font-weight);
 }
 
-.highlighted-folder .nav-file-title:hover,
-.highlighted-parent-folder .nav-file-title:hover,
-.highlighted-folder .nav-file-title.is-being-dragged, 
-.highlighted-parent-folder .nav-file-title.is-being-dragged {
+body:not(.fh-minimal-mode) .highlighted-folder .nav-file-title:hover,
+body:not(.fh-minimal-mode) .highlighted-parent-folder .nav-file-title:hover,
+body:not(.fh-minimal-mode) .highlighted-folder .nav-file-title.is-being-dragged, 
+body:not(.fh-minimal-mode) .highlighted-parent-folder .nav-file-title.is-being-dragged {
     font-weight: var(--highlighted-folder-font-weight) !important;
     color: inherit;
     background-color: color-mix(in srgb, var(--highlighted-folder-color) 60%, transparent) !important;
-    transition: background-color 0.2s ease;
-    transition: font-weight 0.1s ease;
+    transition: background-color 0.2s ease, font-weight 0.1s ease;
 }
 
 /* Einstellungen Einrückung */
@@ -258,3 +262,6 @@
     color: var(--text-normal);
     background-color: var(--background-modifier-hover);
 }
+
+/* Minimal mode - only apply basic highlighting without fancy styling */
+/* In minimal mode, only background colors are applied without any additional styling like shadows, transitions, border-radius, etc. */
