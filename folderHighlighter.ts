@@ -5,7 +5,7 @@ import { FolderHighlighterSettingTab } from "./folderHighlighterSettingTab";
 export default class FolderHighlighter extends Plugin {
 	settings: FolderHighlighterSettings;
 	private debounceTimer: NodeJS.Timeout | undefined;
-	private isProcessing: boolean = false;
+	private isProcessing = false;
 	private operationQueue: Array<() => Promise<void>> = [];
 	private lastExplorerClickTime = 0;
 	private readonly USER_INTERACTION_DEBOUNCE = 300;
