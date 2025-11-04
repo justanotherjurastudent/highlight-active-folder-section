@@ -2,6 +2,10 @@
 
 This plugin for [Obsidian](https://obsidian.md) highlights the container of the folder that contains the currently opened note. It provides a visual aid to better organize your workspace and quickly identify which folder the active note is in.
 
+Support my free content:
+
+<a href="https://www.buymeacoffee.com/justanotherjurastudent" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## Features
 
 - **Highlight Folder Container:** The entire container of the folder containing the active note is highlighted.
@@ -55,3 +59,4 @@ This project is licensed under the GNU General Public License v3.0.
 ---
 
 This text includes the updated information about the new features and settings of the plugin.
+
