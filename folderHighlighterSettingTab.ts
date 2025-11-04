@@ -15,37 +15,56 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 		this.colorSettings = [];
-		const themeHeaderEl = containerEl.createEl("div", {
-			cls: "theme-header",
-		});
-		themeHeaderEl.createEl("h2", {
-			text: this.plugin.settings.editingDarkTheme
-				? "Dark Theme"
-				: "Light Theme",
-			cls: "theme-title",
-		});
-		this.themeToggleButton = themeHeaderEl.createEl("div", {
-			cls: "theme-toggle-button",
-		});
-		this.updateThemeToggleIcon();
-		this.themeToggleButton.addEventListener("click", async () => {
-			this.containerEl.addClass("theme-transition");
-			this.plugin.settings.editingDarkTheme =
-				!this.plugin.settings.editingDarkTheme;
-			await this.plugin.saveSettings();
-			setTimeout(() => {
-				this.display();
-				setTimeout(
-					() => this.containerEl.removeClass("theme-transition"),
-					850
-				);
-			}, 150);
-		});
+		
+		if (!this.plugin.settings.minimalMode) {
+			const themeHeaderEl = containerEl.createEl("div", {
+				cls: "theme-header",
+			});
+			themeHeaderEl.createEl("h2", {
+				text: this.plugin.settings.editingDarkTheme
+					? "Dark Theme"
+					: "Light Theme",
+				cls: "theme-title",
+			});
+			this.themeToggleButton = themeHeaderEl.createEl("div", {
+				cls: "theme-toggle-button",
+			});
+			this.updateThemeToggleIcon();
+			this.themeToggleButton.addEventListener("click", async () => {
+				this.containerEl.addClass("theme-transition");
+				this.plugin.settings.editingDarkTheme =
+					!this.plugin.settings.editingDarkTheme;
+				await this.plugin.saveSettings();
+				setTimeout(() => {
+					this.display();
+					setTimeout(
+						() => this.containerEl.removeClass("theme-transition"),
+						850
+					);
+				}, 150);
+			});
+		}
+		
 		this.createGeneralSettings(containerEl);
-		this.createActiveFolderSettings(containerEl);
-		this.createRootFolderSettings(containerEl);
+		if (!this.plugin.settings.minimalMode) {
+			this.createActiveFolderSettings(containerEl);
+			this.createRootFolderSettings(containerEl);
+		}
 	}
 	private createGeneralSettings(containerEl: HTMLElement) {
+		new Setting(containerEl)
+			.setName("Minimal mode")
+			.setDesc("Disable all visual styling (shadows, animations, colors, etc.) while keeping core functionality like auto-collapse and center active file.")
+			.addToggle((t) =>
+				t
+					.setValue(this.plugin.settings.minimalMode)
+					.onChange(async (v) => {
+						this.plugin.settings.minimalMode = v;
+						await this.plugin.saveSettings();
+						this.display();
+					})
+			);
+
 		new Setting(containerEl)
 			.setName("Override theme styles")
 			.setDesc("Use !important for style definitions")

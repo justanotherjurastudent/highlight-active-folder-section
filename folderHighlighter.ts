@@ -216,6 +216,7 @@ export default class FolderHighlighter extends Plugin {
 		if (this.debounceTimer) clearTimeout(this.debounceTimer);
 		this.operationQueue = [];
 		this.isProcessing = false;
+		document.body.classList.remove("fh-minimal-mode");
 	}
 
 	highlightFolders() {
@@ -303,6 +304,13 @@ export default class FolderHighlighter extends Plugin {
 		Object.entries(properties).forEach(([key, value]) =>
 			rootEl.style.setProperty(key, value)
 		);
+		
+		// Apply or remove minimal mode class on body
+		if (this.settings.minimalMode) {
+			document.body.classList.add("fh-minimal-mode");
+		} else {
+			document.body.classList.remove("fh-minimal-mode");
+		}
 	}
 
 	async loadSettings(): Promise<void> {
