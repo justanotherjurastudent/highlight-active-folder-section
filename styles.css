@@ -69,8 +69,11 @@ body:not(.fh-minimal-mode) .highlighted-folder > .nav-folder-title {
     font-weight: var(--highlighted-folder-font-weight);
 }
 
-body:not(.fh-minimal-mode) .highlighted-parent-folder {
+.highlighted-parent-folder {
     background-color: var(--highlighted-parent-folder-color);
+}
+
+body:not(.fh-minimal-mode) .highlighted-parent-folder {
     border-radius: var(--highlighted-parent-folder-border-radius);
     margin: 5px 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -78,19 +81,14 @@ body:not(.fh-minimal-mode) .highlighted-parent-folder {
     padding-bottom: var(--parent-folder-padding, 3px);
 }
 
-.highlighted-parent-folder {
-    background-color: var(--highlighted-parent-folder-color);
+.highlighted-parent-folder > .nav-folder-title {
+    color: var(--highlighted-parent-folder-text-color);
 }
 
 body:not(.fh-minimal-mode) .highlighted-parent-folder > .nav-folder-title {
-    color: var(--highlighted-parent-folder-text-color);
     border-radius: var(--highlighted-parent-folder-border-radius);
     font-weight: var(--highlighted-parent-folder-font-weight);
     margin-bottom: 5px;
-}
-
-.highlighted-parent-folder > .nav-folder-title {
-    color: var(--highlighted-parent-folder-text-color);
 }
 
 /* Gemeinsame Text- und Hover-Stile */
@@ -114,8 +112,7 @@ body:not(.fh-minimal-mode) .highlighted-parent-folder .nav-file-title.is-being-d
     font-weight: var(--highlighted-folder-font-weight) !important;
     color: inherit;
     background-color: color-mix(in srgb, var(--highlighted-folder-color) 60%, transparent) !important;
-    transition: background-color 0.2s ease;
-    transition: font-weight 0.1s ease;
+    transition: background-color 0.2s ease, font-weight 0.1s ease;
 }
 
 /* Einstellungen Einrückung */
