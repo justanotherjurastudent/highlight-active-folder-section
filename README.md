@@ -1,96 +1,49 @@
-# Obsidian Sample Plugin
+# Highlight Current Folder Section
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+This plugin for [Obsidian](https://obsidian.md) highlights the container of the folder that contains the currently opened note. It provides a visual aid to better organize your workspace and quickly identify which folder the active note is in.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## Features
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+- **Highlight Folder Container**: The entire container of the folder containing the active note is highlighted.
+- **Customizable Colors**: Users can customize the background color of the highlighted folder and the color of the folder title.
+- **Style Adjustments**: Additional styles for the folder title and file names within the highlighted folder, including hover and drag effects.
+- **Highlight Parent Folder**: The container of the parent folder can also be highlighted with customizable colors.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+## Installation
 
-## First time developing plugins?
+1. Download the plugin from the [GitHub repository](https://github.com/your-repo).
+2. Unzip the files and move them to the `.obsidian/plugins/highlight-current-folder-section` folder in your Obsidian vault.
+3. Enable the plugin in Obsidian settings under [`Settings`](command:_github.copilot.openSymbolFromReferences?%5B%22Settings%22%2C%5B%7B%22uri%22%3A%7B%22%24mid%22%3A1%2C%22fsPath%22%3A%22c%3A%5C%5CUsers%5C%5Clukas%5C%5CDocuments%5C%5CObsidian%20Vault%5C%5C.obsidian%5C%5Cplugins%5C%5Cobsidian-sample-plugin%5C%5CREADME.md%22%2C%22_sep%22%3A1%2C%22external%22%3A%22file%3A%2F%2F%2Fc%253A%2FUsers%2Flukas%2FDocuments%2FObsidian%2520Vault%2F.obsidian%2Fplugins%2Fobsidian-sample-plugin%2FREADME.md%22%2C%22path%22%3A%22%2Fc%3A%2FUsers%2Flukas%2FDocuments%2FObsidian%20Vault%2F.obsidian%2Fplugins%2Fobsidian-sample-plugin%2FREADME.md%22%2C%22scheme%22%3A%22file%22%7D%2C%22pos%22%3A%7B%22line%22%3A14%2C%22character%22%3A49%7D%7D%5D%5D "Go to definition") > [`Community Plugins`](command:_github.copilot.openSymbolFromReferences?%5B%22Community%20Plugins%22%2C%5B%7B%22uri%22%3A%7B%22%24mid%22%3A1%2C%22fsPath%22%3A%22c%3A%5C%5CUsers%5C%5Clukas%5C%5CDocuments%5C%5CObsidian%20Vault%5C%5C.obsidian%5C%5Cplugins%5C%5Cobsidian-sample-plugin%5C%5CREADME.md%22%2C%22_sep%22%3A1%2C%22external%22%3A%22file%3A%2F%2F%2Fc%253A%2FUsers%2Flukas%2FDocuments%2FObsidian%2520Vault%2F.obsidian%2Fplugins%2Fobsidian-sample-plugin%2FREADME.md%22%2C%22path%22%3A%22%2Fc%3A%2FUsers%2Flukas%2FDocuments%2FObsidian%20Vault%2F.obsidian%2Fplugins%2Fobsidian-sample-plugin%2FREADME.md%22%2C%22scheme%22%3A%22file%22%7D%2C%22pos%22%3A%7B%22line%22%3A14%2C%22character%22%3A72%7D%7D%5D%5D "Go to definition").
 
-Quick starting guide for new plugin devs:
+## Settings
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+After installing and enabling the plugin, you can customize the highlight colors in the plugin settings:
 
-## Releasing new releases
+- **Highlighted Folder Color**: Choose the background color for the highlighted folder.
+- **Highlighted Folder Title Color**: Choose the color for the highlighted folder title.
+- **Highlighted Parent Folder Color**: Choose the background color for the highlighted parent folder.
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+## Development
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+If you want to contribute to the development of the plugin, follow these steps:
 
-## Adding your plugin to the community plugin list
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/your-repo/highlight-current-folder-section.git
+    ```
+2. Install the dependencies:
+    ```sh
+    npm install
+    ```
+3. Start the development server:
+    ```sh
+    npm run dev
+    ```
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+## License
 
-## How to use
+This project is licensed under the MIT License.
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+---
 
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
+This text includes the updated information about the new features and settings of the plugin.
