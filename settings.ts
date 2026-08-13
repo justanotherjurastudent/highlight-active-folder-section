@@ -2,6 +2,7 @@ export interface FolderHighlighterSettings {
 	autoScroll: boolean;
 	useImportantTags: boolean;
 	autoCollapseOtherFolders: boolean;
+	minimalMode: boolean;
 	lightHighlightedFolderColor: string;
 	lightHighlightFolderTitleColor: boolean;
 	lightHighlightedFolderTitleColor: string;
@@ -28,6 +29,7 @@ export const DEFAULT_SETTINGS: FolderHighlighterSettings = {
 	autoScroll: true,
 	useImportantTags: false,
 	autoCollapseOtherFolders: false,
+	minimalMode: false,
 	lightHighlightedFolderColor: "rgba(238, 238, 238, 1)",
 	lightHighlightFolderTitleColor: false,
 	lightHighlightedFolderTitleColor: "rgba(255, 255, 255, 0)",

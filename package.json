@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "highlight-active-folder-section",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Highlight the active folder section and the title in the file explorer.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
