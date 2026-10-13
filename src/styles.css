@@ -214,8 +214,12 @@ body:not(.fh-minimal-mode) .nav-folder.highlighted-parent-folder .nav-file-title
 .transparency-slider-container {
     display: flex;
     align-items: center;
+    flex: 0 0 100%;
     margin-top: 8px;
-    padding-left: 30px;
+}
+
+.setting-item:has(> .transparency-slider-container) {
+    flex-wrap: wrap;
 }
 
 .transparency-slider-container .setting-item-info {

@@ -18,6 +18,12 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 	display(): void {
+		// Obsidian calls display() on open: start in the theme currently active in Obsidian
+		this.plugin.settings.editingDarkTheme =
+			document.body.classList.contains("theme-dark");
+		this.render();
+	}
+	private render(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 		this.colorSettings = [];
@@ -42,7 +48,7 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 				this.plugin.settings.editingDarkTheme =
 					!this.plugin.settings.editingDarkTheme;
 				void this.plugin.saveSettings().then(() => {
-					this.display();
+					this.render();
 					window.setTimeout(
 						() =>
 							this.containerEl.removeClass(
@@ -70,13 +76,13 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 					.onChange(async (v) => {
 						this.plugin.settings.minimalMode = v;
 						await this.plugin.saveSettings();
-						this.display();
+						this.render();
 					})
 			);
 
 		new Setting(containerEl)
 			.setName("Override theme styles")
-			.setDesc("Use !important for style definitions")
+			.setDesc("Force the highlight colors to win over your theme's styles (adds !important). Enable this if the colors don't show up.")
 			.addToggle((t) =>
 				t
 					.setValue(this.plugin.settings.useImportantTags)
@@ -115,12 +121,16 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 			);
 	}
 	private createActiveFolderSettings(containerEl: HTMLElement) {
-		new Setting(containerEl).setName("Active Folder").setHeading();
+		new Setting(containerEl)
+			.setName("Active Folder")
+			.setDesc("Style of the folder containing the active file. Font weight and border radius may be overridden by your current theme.")
+			.setHeading();
 		const settingContainer = containerEl.createEl("div", {
 			cls: "setting-indent",
 		});
 		new Setting(settingContainer)
 			.setName("Enable title background")
+			.setDesc("Give the active folder's name row its own background color.")
 			.addToggle((t) =>
 				t
 					.setValue(
@@ -154,26 +164,26 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 									: DEFAULT_SETTINGS.darkHighlightedFolderTitleColor;
 						}
 						await this.plugin.saveSettings();
-						this.display();
+						this.render();
 					})
 			);
 		if (this.getCurrentThemeSetting("highlightFolderTitleColor"))
 			this.createColorSetting(
 				settingContainer,
 				"Title background color",
-				"",
+				"Background of the active folder's name row.",
 				"HighlightedFolderTitleColor"
 			);
 		this.createColorSetting(
 			settingContainer,
 			"Folder background",
-			"",
+			"Background of the whole active folder, including its contents.",
 			"HighlightedFolderColor"
 		);
 		this.createColorSetting(
 			settingContainer,
 			"Text color",
-			"",
+			"Text color of the active folder's name.",
 			"HighlightedFolderTextColor"
 		);
 		new Setting(settingContainer)
@@ -200,7 +210,10 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 			});
 	}
 	private createRootFolderSettings(containerEl: HTMLElement) {
-		new Setting(containerEl).setName("Root Folder").setHeading();
+		new Setting(containerEl)
+			.setName("Root Folder")
+			.setDesc("Style of the top-level folder in the file explorer that contains the active file.")
+			.setHeading();
 		new Setting(containerEl)
 			.setName("Highlight root folders")
 			.addToggle((t) =>
@@ -209,7 +222,7 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 					.onChange(async (v) => {
 						this.plugin.settings.highlightParentFolder = v;
 						await this.plugin.saveSettings();
-						this.display();
+						this.render();
 					})
 			);
 		if (this.plugin.settings.highlightParentFolder) {
@@ -219,13 +232,13 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 			this.createColorSetting(
 				settingContainer,
 				"Root background",
-				"",
+				"Background of the highlighted root folder.",
 				"HighlightedParentFolderColor"
 			);
 			this.createColorSetting(
 				settingContainer,
 				"Root text color",
-				"",
+				"Text color of the highlighted root folder's name.",
 				"HighlightedParentFolderTextColor"
 			);
 			
@@ -260,12 +273,14 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 		const key = `${theme}${baseKey}` as keyof FolderHighlighterSettings;
 		const value = this.plugin.settings[key] as string;
 		const rgba = this.extractRgbaComponents(value);
-		new Setting(containerEl)
+		const setting = new Setting(containerEl)
 			.setName(name)
 			.setDesc(desc)
 			.addColorPicker((c) =>				c.setValue(this.rgbToHex(rgba)).onChange(async (nc) => {
 					const nr = this.hexToRgb(nc);
-					(this.plugin.settings[key] as string) = `rgba(${nr.r}, ${nr.g}, ${nr.b}, ${rgba.a})`;
+					// Read alpha from the saved value, not the one captured at render time (slider may have changed it)
+					const { a } = this.extractRgbaComponents(this.plugin.settings[key] as string);
+					(this.plugin.settings[key] as string) = `rgba(${nr.r}, ${nr.g}, ${nr.b}, ${a})`;
 					await this.plugin.saveSettings();
 				})
 			)			.addExtraButton((b) =>
@@ -274,10 +289,11 @@ export class FolderHighlighterSettingTab extends PluginSettingTab {
 						`${theme}${baseKey}` as keyof typeof DEFAULT_SETTINGS
 					] as string;
 					await this.plugin.saveSettings();
-					this.display();
+					this.render();
 				})
 			);
-		const tc = containerEl.createEl("div", {
+		// Inside the setting card, otherwise it overlaps the next card in newer Obsidian layouts
+		const tc = setting.settingEl.createEl("div", {
 			cls: "transparency-slider-container",
 		});
 		tc.createEl("div", { cls: "setting-item-info", text: "Transparency" });
